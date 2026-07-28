@@ -34,6 +34,7 @@ This repo contains info on all the apps / tools / settings I use on my Mac.
 - [Node.js](#nodejs)
   - [Global Modules](#global-modules)
 - [VS Code](#vs-code)
+- [Custom Scripts](#custom-scripts)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -387,3 +388,44 @@ npm install -g lite-server http-server license gitignore
 VS Code is my preferred code editor.
 
 You can view all of my VS Code settings / extensions [here](https://github.com/CodingGarden/vscode-settings).
+
+## Custom Scripts
+
+Small personal CLI scripts live in [`bin/`](./bin) and are symlinked into `~/bin` so they're on `$PATH`. They're written as [PEP 723](https://peps.python.org/pep-0723/) single-file scripts run via `uv run`, so `uv` handles their dependencies automatically — no venv setup needed.
+
+```sh
+brew install uv
+```
+
+### Setup (new machine)
+
+```sh
+git clone https://github.com/christwellman/mac-setup.git
+cd mac-setup
+./install.sh
+```
+
+`install.sh` symlinks everything in `bin/` into `~/bin`. Re-run it any time after `git pull` to pick up new/updated scripts.
+
+### Scripts
+
+* **`ytmd.py`** — YouTube Transcript Downloader. Fetches a video's transcript and saves it as markdown to `~/downloads/transcripts`.
+* **`xtmd.py`** — X/Twitter Thread Downloader. Saves a thread as markdown to `~/downloads/threads`.
+* **`ytdl.py`** — YouTube video downloader. Saves video + metadata to `~/downloads/videos`.
+
+### Shell functions
+
+Add to `~/.zshrc`:
+
+```sh
+#Youtube Transcript Downloader:
+ytmd() {
+  ~/bin/ytmd.py "$1"
+}
+#X/Twitter Thread Downloader:
+xtmd() {
+  ~/bin/xtmd.py "$1"
+}
+```
+
+`ytdl.py` isn't wired into a shell function yet — call it directly (`~/bin/ytdl.py <url>`) or add your own `ytdl()` wrapper the same way if you want the shortcut.

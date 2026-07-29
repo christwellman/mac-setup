@@ -5,11 +5,16 @@
 # re-run any time (e.g. after `git pull` on a new machine) — it only
 # ever creates/updates symlinks, never deletes anything.
 #
-# With a profile argument (home or work): also installs the Homebrew
-# formulae/casks and VS Code extensions for that profile, combining
-# the shared *-common.txt lists with the profile-specific *-<profile>.txt
-# lists. Lines starting with # (and blank lines) are ignored, so the
-# not-yet-filled-in profile files are safe to pass through as-is.
+# With a profile argument (home or work): also wires up ~/.zshrc and
+# installs the Homebrew formulae/casks and VS Code extensions for that
+# profile, combining the shared *-common.txt lists with the
+# profile-specific *-<profile>.txt lists. Lines starting with # (and
+# blank lines) are ignored, so the not-yet-filled-in profile files are
+# safe to pass through as-is.
+#
+# Package install failures (a cask already installed outside Homebrew,
+# stale Homebrew metadata, network hiccups, etc.) are reported but don't
+# stop the script — the ~/.zshrc wiring always runs if a profile was given.
 
 set -euo pipefail
 
@@ -26,14 +31,19 @@ for script in "$REPO_DIR"/bin/*.py; do
   echo "Linked $TARGET_DIR/$name -> $script"
 done
 
+# Installs from combined list file(s); reports failures but never exits
+# the script (each cask/formula is independent — one bad apple shouldn't
+# block everything else, especially the zshrc wiring below).
 install_from() {
-  # $1 = brew subcommand args (e.g. "install" or "install --cask")
+  # $1 = brew subcommand args (e.g. "install" or "install --cask --adopt")
   # $2, $3, ... = list files to combine
   local brew_args="$1"; shift
   local combined
   combined="$(cat "$@" 2>/dev/null | grep -v '^\s*#' | grep -v '^\s*$' || true)"
   if [ -n "$combined" ]; then
-    echo "$combined" | xargs brew $brew_args
+    if ! echo "$combined" | xargs brew $brew_args; then
+      echo "WARNING: one or more 'brew $brew_args' installs failed above — see output. Continuing." >&2
+    fi
   fi
 }
 
@@ -43,25 +53,9 @@ if [ -n "$PROFILE" ]; then
     exit 1
   fi
 
-  echo
-  echo "Installing Homebrew formulae for profile: $PROFILE"
-  install_from "install" "$REPO_DIR/brew-formulae-common.txt" "$REPO_DIR/brew-formulae-$PROFILE.txt"
-
-  echo
-  echo "Installing Homebrew casks for profile: $PROFILE"
-  install_from "install --cask" "$REPO_DIR/brew-casks-common.txt" "$REPO_DIR/brew-casks-$PROFILE.txt"
-
-  if command -v code >/dev/null; then
-    echo
-    echo "Installing VS Code extensions for profile: $PROFILE"
-    ext_combined="$(cat "$REPO_DIR/vscode-extensions-common.txt" "$REPO_DIR/vscode-extensions-$PROFILE.txt" 2>/dev/null | grep -v '^\s*#' | grep -v '^\s*$' || true)"
-    if [ -n "$ext_combined" ]; then
-      while IFS= read -r ext; do
-        code --install-extension "$ext"
-      done <<< "$ext_combined"
-    fi
-  fi
-
+  # ~/.zshrc wiring runs FIRST and unconditionally (for this profile) —
+  # it's more fundamental than package installs and shouldn't get skipped
+  # if brew hits a snag further down.
   echo
   echo "Wiring up ~/.zshrc for profile: $PROFILE"
   mkdir -p "$HOME/.zshrc.d"
@@ -85,6 +79,27 @@ if [ -n "$PROFILE" ]; then
   if [ ! -f "$HOME/.zshrc.local" ]; then
     touch "$HOME/.zshrc.local"
     echo "Created empty ~/.zshrc.local (untracked — put machine-only secrets/aliases here, e.g. the old SSH alias)"
+  fi
+
+  echo
+  echo "Installing Homebrew formulae for profile: $PROFILE"
+  install_from "install" "$REPO_DIR/brew-formulae-common.txt" "$REPO_DIR/brew-formulae-$PROFILE.txt"
+
+  echo
+  echo "Installing Homebrew casks for profile: $PROFILE"
+  # --adopt: if the app is already installed outside Homebrew (e.g. a
+  # direct download), take over managing it instead of erroring out.
+  install_from "install --cask --adopt" "$REPO_DIR/brew-casks-common.txt" "$REPO_DIR/brew-casks-$PROFILE.txt"
+
+  if command -v code >/dev/null; then
+    echo
+    echo "Installing VS Code extensions for profile: $PROFILE"
+    ext_combined="$(cat "$REPO_DIR/vscode-extensions-common.txt" "$REPO_DIR/vscode-extensions-$PROFILE.txt" 2>/dev/null | grep -v '^\s*#' | grep -v '^\s*$' || true)"
+    if [ -n "$ext_combined" ]; then
+      while IFS= read -r ext; do
+        code --install-extension "$ext" || echo "WARNING: failed to install VS Code extension '$ext' — continuing." >&2
+      done <<< "$ext_combined"
+    fi
   fi
 fi
 

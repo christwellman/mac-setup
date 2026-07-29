@@ -137,3 +137,7 @@ diagnostics/report.txt
 
 # macOS Finder clutter
 .DS_Store
+
+# Local-only backup of app inventory + preferences (may contain API keys,
+# license data, etc. — never commit this)
+backup/

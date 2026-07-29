@@ -29,6 +29,7 @@ This repo documents the actual current setup of my Mac — apps, tools, and sett
   - [Global Modules](#global-modules)
 - [VS Code](#vs-code)
 - [Custom Scripts](#custom-scripts)
+- [Local Backup (not on GitHub)](#local-backup-not-on-github)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -288,3 +289,16 @@ cd mac-setup
 ### Shell functions
 
 `ytmd`, `xtmd`, and `ytdl` are defined in [`zshrc-common.zsh`](./zshrc-common.zsh) and available automatically once `~/.zshrc` is symlinked via `install.sh <profile>` (see [Dotfiles](#dotfiles)) — no manual copy-paste needed.
+
+## Local Backup (not on GitHub)
+
+[`scripts/backup-local.sh`](./scripts/backup-local.sh) captures two things into a `backup/` folder that's gitignored — it never leaves this machine:
+
+* **App inventory** (`backup/apps-inventory.txt`, `backup/manual-apps.txt`) — everything in `/Applications`, cross-referenced against Homebrew casks and Mac App Store apps, plus a best-effort list of what's left over (installed some other way — direct download, DMG, etc., the way `Amphetamine` and `Sophos Home` used to show up in the old setup docs).
+* **App preferences** (`backup/preferences/`) — every `~/Library/Preferences/*.plist`, plus known `~/Library/Application Support/` folders for apps that store real config there (VS Code, Sublime Text, Keyboard Maestro, aText, iTerm2, Beekeeper Studio).
+
+```sh
+./scripts/backup-local.sh
+```
+
+This intentionally does **not** get committed — preference files can carry API keys, license data, or auth tokens (WakaTime's config is a real example). Treat `backup/` as a local safety net, not something to publish. Re-run it whenever you want a fresh snapshot; it overwrites in place.

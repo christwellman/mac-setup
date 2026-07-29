@@ -131,3 +131,6 @@ dist
 
 # Local diagnostic output (contains hardware serial/UUID - never commit)
 diagnostics/report.txt
+
+# Local zsh secrets/overrides, never committed
+.zshrc.local

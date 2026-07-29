@@ -115,7 +115,7 @@ brew outdated           # see what's behind
 brew upgrade            # upgrade everything
 brew cleanup             # remove old versions
 
-# Mac App Store apps (needs the `mas` formula, already in brew-formulae.txt)
+# Mac App Store apps (needs the `mas` formula, already in brew-formulae-home.txt)
 mas outdated
 mas upgrade
 
@@ -211,11 +211,15 @@ Current actual profile settings (Default profile):
 
 #### Dotfiles
 
-`~/.zshrc` isn't tracked in this repo (or any repo) right now — it lives only on-machine. It sets up, among other things: Homebrew completions, Go (`GOROOT`/`GOPATH`), a pinned Python 3.11 as the default `python`/`python3`, the Google Cloud SDK, `nvm`, iTerm2 shell integration, and a handful of personal aliases (including one for a local SSH target — intentionally not reproduced here since this repo is public).
+`~/.zshrc` is tracked in this repo, split the same way as everything else:
 
-There's also an old, stale dotfiles/setup snapshot in iCloud Drive (`~/Library/Mobile Documents/com~apple~CloudDocs/dotfiles`) from a previous job — it's not synced with or representative of this machine's current `.zshrc`; ignore it.
+* [`zshrc-common.zsh`](./zshrc-common.zsh) — shared: oh-my-zsh bootstrap, `nvm`, iTerm2 shell integration, general aliases, and the `ytmd`/`xtmd`/`ytdl` functions from [Custom Scripts](#custom-scripts)
+* [`zshrc-home.zsh`](./zshrc-home.zsh) / [`zshrc-work.zsh`](./zshrc-work.zsh) — profile-specific: Go (`GOROOT`/`GOPATH`), a pinned Python 3.11 as default `python`/`python3`, the Google Cloud SDK, `hugo` — currently all filed under Home, move to common if Work needs them too
+* `~/.zshrc.local` — **not tracked**, machine-only secrets/aliases (e.g. the local SSH target alias that used to live in plain `.zshrc`)
 
-If you want `.zshrc` itself version-controlled going forward, the cleanest path is adding it to this repo (redacting anything sensitive) with a symlink step in `install.sh`.
+`install.sh <profile>` wires this all up: it symlinks `~/.zshrc` to this repo's `zshrc` dispatcher (backing up whatever was there first, as `~/.zshrc.backup.<timestamp>`), symlinks the right profile pieces into `~/.zshrc.d/`, and creates an empty `~/.zshrc.local` if one doesn't exist yet.
+
+There's also an old, stale dotfiles/setup snapshot in iCloud Drive (`~/Library/Mobile Documents/com~apple~CloudDocs/dotfiles`) from a previous job — it's not synced with or representative of this repo; ignore it.
 
 ### Github SSH Setup
 
@@ -284,19 +288,4 @@ cd mac-setup
 
 ### Shell functions
 
-Add to `~/.zshrc`:
-
-```sh
-#Youtube Transcript Downloader:
-ytmd() {
-  ~/bin/ytmd.py "$1"
-}
-#X/Twitter Thread Downloader:
-xtmd() {
-  ~/bin/xtmd.py "$1"
-}
-#Youtube Video Downloader:
-ytdl() {
-  ~/bin/ytdl.py "$1"
-}
-```
+`ytmd`, `xtmd`, and `ytdl` are defined in [`zshrc-common.zsh`](./zshrc-common.zsh) and available automatically once `~/.zshrc` is symlinked via `install.sh <profile>` (see [Dotfiles](#dotfiles)) — no manual copy-paste needed.

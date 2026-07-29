@@ -61,11 +61,41 @@ if [ -n "$PROFILE" ]; then
       done <<< "$ext_combined"
     fi
   fi
+
+  echo
+  echo "Wiring up ~/.zshrc for profile: $PROFILE"
+  mkdir -p "$HOME/.zshrc.d"
+  ln -sf "$REPO_DIR/zshrc-common.zsh" "$HOME/.zshrc.d/common.zsh"
+  if [ -f "$REPO_DIR/zshrc-$PROFILE.zsh" ]; then
+    ln -sf "$REPO_DIR/zshrc-$PROFILE.zsh" "$HOME/.zshrc.d/profile.zsh"
+  fi
+
+  if [ -L "$HOME/.zshrc" ] && [ "$(readlink "$HOME/.zshrc")" = "$REPO_DIR/zshrc" ]; then
+    echo "~/.zshrc already symlinked to this repo."
+  else
+    if [ -e "$HOME/.zshrc" ]; then
+      backup="$HOME/.zshrc.backup.$(date +%Y%m%d%H%M%S)"
+      mv "$HOME/.zshrc" "$backup"
+      echo "Backed up existing ~/.zshrc to $backup"
+    fi
+    ln -s "$REPO_DIR/zshrc" "$HOME/.zshrc"
+    echo "Symlinked ~/.zshrc -> $REPO_DIR/zshrc"
+  fi
+
+  if [ ! -f "$HOME/.zshrc.local" ]; then
+    touch "$HOME/.zshrc.local"
+    echo "Created empty ~/.zshrc.local (untracked — put machine-only secrets/aliases here, e.g. the old SSH alias)"
+  fi
 fi
 
 echo
 echo "Done. Make sure 'uv' is installed (brew install uv) since the bin/ scripts"
 echo "use a 'uv run' shebang with inline dependencies."
-echo
-echo "Now add the function block from README.md's 'Custom Scripts' section"
-echo "to your ~/.zshrc if you haven't already, then run: source ~/.zshrc"
+if [ -n "$PROFILE" ]; then
+  echo
+  echo "Run 'source ~/.zshrc' (or open a new terminal) to pick up the shell config."
+else
+  echo
+  echo "Note: no profile was given, so ~/.zshrc wasn't touched. Run"
+  echo "'./install.sh home' (or work) to also wire up shell config/packages."
+fi

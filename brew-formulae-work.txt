@@ -1,0 +1,3 @@
+# TODO: run diagnostics/collect.sh on the work Mac and fill this in.
+# Once filled in, move anything that overlaps with brew-formulae-home.txt
+# into brew-formulae-common.txt.

@@ -1,0 +1,3 @@
+# Casks installed on every Mac, regardless of profile.
+# Move an entry here from brew-casks-home.txt / brew-casks-work.txt
+# once you confirm it's installed on both machines.

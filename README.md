@@ -6,6 +6,7 @@ This repo documents the actual current setup of my Mac — apps, tools, and sett
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
+- [Profiles: Home vs Work](#profiles-home-vs-work)
 - [What Mac do I have?](#what-mac-do-i-have)
 - [OS Settings](#os-settings)
   - [Desktop](#desktop)
@@ -31,9 +32,25 @@ This repo documents the actual current setup of my Mac — apps, tools, and sett
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## Profiles: Home vs Work
+
+This one repo covers both my Home and Work Macs. Most of it is shared; where the two machines differ (installed apps, VS Code extensions), the lists are split:
+
+* `*-common.txt` — installed on both machines
+* `*-home.txt` — Home-only
+* `*-work.txt` — Work-only
+
+`install.sh` takes the profile as an argument and installs common + profile-specific:
+
+```sh
+./install.sh home   # or: ./install.sh work
+```
+
+Right now the Work profile files are empty placeholders — run `diagnostics/collect.sh` on the Work Mac and fill them in, moving anything that overlaps with Home into the `*-common.txt` files.
+
 ## What Mac do I have?
 
-Mac mini (M4, base chip), Model Identifier `Mac16,10`.
+**Home profile.** Mac mini (M4, base chip), Model Identifier `Mac16,10`.
 
 * Apple M4, 10-core CPU (4 performance + 6 efficiency)
 * 24GB RAM
@@ -82,11 +99,10 @@ Not currently using a dedicated launcher or window manager app (no RayCast, Alfr
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Formulae and casks actually in use are tracked in [`brew-formulae.txt`](./brew-formulae.txt) and [`brew-casks.txt`](./brew-casks.txt):
+Formulae and casks actually in use are tracked per-profile (see [Profiles: Home vs Work](#profiles-home-vs-work) above): [`brew-formulae-common.txt`](./brew-formulae-common.txt) / [`brew-formulae-home.txt`](./brew-formulae-home.txt) / [`brew-formulae-work.txt`](./brew-formulae-work.txt), and the equivalent `brew-casks-*.txt` files.
 
 ```sh
-xargs brew install < brew-formulae.txt
-xargs brew install --cask < brew-casks.txt
+./install.sh home   # or work — installs common + profile-specific formulae, casks, and VS Code extensions
 ```
 
 Custom taps in use on this machine: `sapireli/airprint_bridge` (for the AirPrint bridge formula used by `~/bin/airprint_bridge_launcher.sh`) and `steipete/tap`.
@@ -149,6 +165,8 @@ Extension preferences (not independently re-verified against the actual browser 
 
 ## Other Apps I Use Daily
 
+This list is the **Home** profile ([`brew-casks-home.txt`](./brew-casks-home.txt)); see [Profiles](#profiles-home-vs-work) for how Work differs.
+
 * [1Password CLI](https://developer.1password.com/docs/cli/) (`1password-cli`) - command-line access to 1Password vaults
 * [aText](https://www.trankynam.com/atext/) (`atext`) - text expansion / snippets
 * [Beekeeper Studio](https://www.beekeeperstudio.io/) (`beekeeper-studio`) - SQL database GUI client
@@ -167,10 +185,10 @@ Extension preferences (not independently re-verified against the actual browser 
 * [WakaTime](https://wakatime.com/) (`wakatime`) - coding time tracking
 * [WordService](https://tempel.org/WordService/) (`wordservice`) - system-wide text services
 
-Install them all at once:
+Install them all at once (combined with whichever profile you're on):
 
 ```sh
-xargs brew install --cask < brew-casks.txt
+./install.sh home   # or work
 ```
 
 ## Terminal
@@ -232,40 +250,12 @@ npm install -g lighthouse uipro-cli
 
 ## VS Code
 
-VS Code is my editor. Current extensions (via `code --list-extensions`):
+VS Code is my editor. Extensions are tracked per-profile, same pattern as Homebrew: [`vscode-extensions-common.txt`](./vscode-extensions-common.txt), [`vscode-extensions-home.txt`](./vscode-extensions-home.txt) (current Home list, from `code --list-extensions`), [`vscode-extensions-work.txt`](./vscode-extensions-work.txt) (TODO).
 
-```
-anthropic.claude-code
-charliermarsh.ruff
-github.vscode-github-actions
-janisdd.vscode-edit-csv
-mechatroner.rainbow-csv
-mohsen1.prettify-json
-ms-python.debugpy
-ms-python.isort
-ms-python.python
-ms-python.vscode-pylance
-ms-python.vscode-python-envs
-ms-toolsai.jupyter
-ms-toolsai.jupyter-keymap
-ms-toolsai.jupyter-renderers
-ms-toolsai.vscode-jupyter-cell-tags
-ms-toolsai.vscode-jupyter-slideshow
-ms-vscode-remote.remote-ssh
-ms-vscode-remote.remote-ssh-edit
-ms-vscode.remote-explorer
-qwtel.sqlite-viewer
-randomfractalsinc.tabular-data-viewer
-randomfractalsinc.vscode-data-preview
-tomoki1207.pdf
-zainchen.json
-zhouronghui.propertylist
-```
-
-Install them all:
+Install them all (combined with whichever profile you're on):
 
 ```sh
-xargs -L 1 code --install-extension < vscode-extensions.txt
+./install.sh home   # or work
 ```
 
 ## Custom Scripts
@@ -281,10 +271,10 @@ brew install uv
 ```sh
 git clone https://github.com/christwellman/mac-setup.git
 cd mac-setup
-./install.sh
+./install.sh home   # or work
 ```
 
-`install.sh` symlinks everything in `bin/` into `~/bin`. Re-run it any time after `git pull` to pick up new/updated scripts.
+`install.sh` symlinks everything in `bin/` into `~/bin`, and — when given a profile — also installs that profile's Homebrew formulae/casks and VS Code extensions (see [Profiles: Home vs Work](#profiles-home-vs-work)). Re-run it any time after `git pull` to pick up new/updated scripts or package lists.
 
 ### Scripts
 

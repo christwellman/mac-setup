@@ -426,6 +426,8 @@ ytmd() {
 xtmd() {
   ~/bin/xtmd.py "$1"
 }
+#Youtube Video Downloader:
+ytdl() {
+  ~/bin/ytdl.py "$1"
+}
 ```
-
-`ytdl.py` isn't wired into a shell function yet — call it directly (`~/bin/ytdl.py <url>`) or add your own `ytdl()` wrapper the same way if you want the shortcut.

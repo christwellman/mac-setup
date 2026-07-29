@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Local diagnostic output (contains hardware serial/UUID - never commit)
+diagnostics/report.txt

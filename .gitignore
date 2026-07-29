@@ -134,3 +134,6 @@ diagnostics/report.txt
 
 # Local zsh secrets/overrides, never committed
 .zshrc.local
+
+# macOS Finder clutter
+.DS_Store

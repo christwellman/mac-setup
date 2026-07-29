@@ -109,17 +109,16 @@ Custom taps in use on this machine: `sapireli/airprint_bridge` (for the AirPrint
 
 ### Keeping things updated
 
+[`scripts/brew-update.sh`](./scripts/brew-update.sh) does the Homebrew/cask/MAS side of this in one go — updates formulae, upgrades outdated casks, prompts for Mac App Store updates, cleans up old versions, runs `brew doctor`, and logs everything to `~/Logs/`:
+
 ```sh
-brew update            # refresh formula definitions
-brew outdated           # see what's behind
-brew upgrade            # upgrade everything
-brew cleanup             # remove old versions
+./scripts/brew-update.sh          # run it
+./scripts/brew-update.sh --dry-run   # see what it would do first
+```
 
-# Mac App Store apps (needs the `mas` formula, already in brew-formulae-home.txt)
-mas outdated
-mas upgrade
+For macOS itself (not covered by the script):
 
-# macOS itself
+```sh
 softwareupdate --list
 sudo softwareupdate --install [name listed]
 ```

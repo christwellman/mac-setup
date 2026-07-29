@@ -47,7 +47,35 @@ This one repo covers both my Home and Work Macs. Most of it is shared; where the
 ./install.sh home   # or: ./install.sh work
 ```
 
-Right now the Work profile files are empty placeholders — run `diagnostics/collect.sh` on the Work Mac and fill them in, moving anything that overlaps with Home into the `*-common.txt` files.
+Right now the Work profile files are empty placeholders. Here's how to pull in the Work Mac's real setup:
+
+1. **Clone the repo there** (or `git pull` if it's already cloned):
+
+   ```sh
+   git clone https://github.com/christwellman/mac-setup.git
+   cd mac-setup
+   ```
+
+2. **Run the diagnostics** to capture what's actually installed/configured:
+
+   ```sh
+   ./diagnostics/collect.sh > diagnostics/report.txt
+   ./scripts/backup-local.sh   # optional — also gives you a manual-apps.txt for that machine
+   ```
+
+   Both outputs are gitignored, so they stay on the Work Mac unless you move them somewhere yourself (paste the contents to Claude in a session with access to this repo, copy the file over some other way, etc.).
+
+3. **Fill in the Work files** using that report as the source of truth: `brew-formulae-work.txt`, `brew-casks-work.txt`, `vscode-extensions-work.txt`, `zshrc-work.zsh`. Anything that matches what's already in the equivalent `*-home.txt` / `zshrc-common.zsh` should move into the `*-common.txt` file / `zshrc-common.zsh` instead of being duplicated in `-work`.
+
+4. **Wire it up** on the Work Mac:
+
+   ```sh
+   ./install.sh work
+   ```
+
+5. **Commit and push** from whichever machine has the changes — it's the same repo either way.
+
+If you'd rather have Claude do the reconciliation (same as we did for Home), just get `diagnostics/report.txt` from the Work Mac into a session that has access to this repo and ask it to fill in the Work profile — steps 3–4 are exactly what it'll do.
 
 ## What Mac do I have?
 

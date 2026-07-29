@@ -1,36 +1,29 @@
 ## My Mac Setup
 
-This repo contains info on all the apps / tools / settings I use on my Mac.
+This repo documents the actual current setup of my Mac — apps, tools, and settings. It's meant to reflect reality, not a wishlist, so I can rebuild this machine (or set up a new one) accurately.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [What Macbook do I have?](#what-macbook-do-i-have)
+- [What Mac do I have?](#what-mac-do-i-have)
 - [OS Settings](#os-settings)
   - [Desktop](#desktop)
   - [Finder](#finder)
   - [Dock](#dock)
-- [Quick Launching](#quick-launching)
+- [Quick Launching & Window Management](#quick-launching--window-management)
 - [Homebrew](#homebrew)
-  - [Homebrew](#homebrew-1)
-  - [RayCast Homebrew Plugin](#raycast-homebrew-plugin)
-- [Window Management](#window-management)
-- [App Switching](#app-switching)
+  - [Keeping things updated](#keeping-things-updated)
 - [Menu Bar Utilities](#menu-bar-utilities)
   - [Hidden Bar](#hidden-bar)
-  - [System Stats Widgets](#system-stats-widgets)
   - [Menu Bar Calendar](#menu-bar-calendar)
-- [Break Timer](#break-timer)
 - [Web Browser](#web-browser)
   - [Firefox](#firefox)
 - [Other Apps I Use Daily](#other-apps-i-use-daily)
-  - [Docker](#docker)
 - [Terminal](#terminal)
   - [Shell](#shell)
-    - [Load dotfiles](#load-dotfiles)
+    - [Dotfiles](#dotfiles)
   - [Github SSH Setup](#github-ssh-setup)
-    - [Other command line tools I use](#other-command-line-tools-i-use)
 - [Node.js](#nodejs)
   - [Global Modules](#global-modules)
 - [VS Code](#vs-code)
@@ -38,22 +31,12 @@ This repo contains info on all the apps / tools / settings I use on my Mac.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## What Macbook do I have?
+## What Mac do I have?
 
-I am using a 2020 13" Macbook Pro for work and a 2021 14" Macbook Pro for personal stuff.
+Mac mini (M4, base chip), Model Identifier `Mac16,10`.
 
-The specs for both machines:
-* 2020
-  * Apple M1
-* 2021
-  * Apple M1 Pro
-* 16GB RAM
-* 500GB SSD
-
-Read more about these Macbooks here:
-
-* [2020](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-m1-8-core-13-2020-specs.html)
-* [2021](https://everymac.com/systems/apple/macbook_pro/specs/macbook-pro-m1-pro-8-core-cpu-14-core-gpu-14-2021-specs.html)
+* Apple M4, 10-core CPU (4 performance + 6 efficiency)
+* 24GB RAM
 
 ## OS Settings
 
@@ -61,333 +44,229 @@ These are my preferred settings for `Desktop`, `Finder` and the `Dock`.
 
 ### Desktop
 
-I don't like the new Desktop, Stage Manager or Widget features in Sonoma, so I disable them.
+I don't like the Desktop, Stage Manager or Widget features, so I disable them.
 
-* System Preferences
+* System Settings
   * Desktop & Dock
-    * Desktop & Stage Manager
-      * Show Items
-        * On Desktop -> uncheck
-        * In Stage Manager -> uncheck
-      * Click wallpaper to reveal desktop -> Only in Stage Manager
-      * Stage Manager -> uncheck
-      * Widgets
-        * On Desktop -> uncheck
-        * In Stage Manager -> uncheck
+    * Stage Manager -> off (confirmed via `defaults read com.apple.WindowManager GloballyEnabled` = 0)
+
+> Note: the exact state of the individual "show widgets" / "show desktop items" checkboxes wasn't independently reverified against `defaults` — the underlying keys are ambiguous across macOS versions. Check by eye in System Settings if it matters.
 
 ### Finder
 
-* Finder -> Preferences
-  * General -> Show these on the desktop -> Select None
-      * I try to keep my desktop completely clean.
-  * General -> New Finder windows show -> Home Folder
-      * I prefer to see my home folder in each new finder window instead of recent documents
-  * Advanced -> Show all filename extensions -> Yes
-  * Advanced -> Show warning before changing an extension -> No
-  * Advanced -> When performing a search -> Search the current folder
-* View
-  * Show Status Bar
-  * Show Path Bar
-  * Show Tab Bar
+Current actual settings (verified via `defaults read`):
+
+* Show Path Bar -> on
+* Show Status Bar -> on
+* Show all filename extensions -> on
+* New Finder windows show -> **All My Files** (not Home Folder — this drifted from an earlier preference; change it in Finder -> Settings -> General if you'd rather have Home Folder)
+* Desktop icons: external hard drives and removable media currently show on the desktop; internal hard drives and mounted servers do not
 
 ### Dock
 
-I don't use the Dock at all. It takes up screen space, and I can use RayCast to launch apps and AltTab to switch between apps. I make the dock as small as possible and auto hide it.
+* Size -> ~47pt (small-ish, not minimum)
+* Position -> bottom (default — an earlier preference called for the left side; change in System Settings -> Desktop & Dock if you want that back)
+* Automatically hide and show the Dock -> on
+* Animate opening applications -> off
+* Show suggested and recent apps in the Dock -> off
 
-* System Preferences
-  * Desktop & Dock
-    * Size -> Small as possible
-    * Position on screen -> Left
-    * Automatically hide and show the Dock -> Yes
-    * Animate opening applications -> No
-    * Show suggested and recent apps in the Dock -> No
+## Quick Launching & Window Management
 
-## Quick Launching
-
-The built in spotlight search is a bit slow for me and usually has web search results as the default instead of apps or folders on my machine.
-
-I recently switched from [Alfred](https://www.alfredapp.com/) to [RayCast](https://www.raycast.com/). I'm really liking it so far.
-
-```sh
-brew install raycast
-```
+Not currently using a dedicated launcher or window manager app (no RayCast, Alfred, Rectangle, or AltTab installed) — relying on macOS defaults (Spotlight, Mission Control, standard `Cmd+Tab`). Revisit this section if that changes.
 
 ## Homebrew
 
-### Homebrew
-
-[Homebrew](https://brew.sh/) allows us to install tools and apps from the command line.
-
-To install it, open up the built in `Terminal` app and run this command:
+[Homebrew](https://brew.sh/) installs tools and apps from the command line. To install it:
 
 ```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-This will also install the xcode build tools which is needed by many other developer tools.
-
-After Homebrew is done installing, we will use it (via RayCast) to install everything else we need.
-
-
-### RayCast Homebrew Plugin
-
-Install the [RayCast Homebrew Plugin](https://www.raycast.com/nhojb/brew) so we can easily install formulae and casks directly from RayCast.
-
-## Window Management
-
-I know this feature is built in to a lot of other operating systems, but it is not built in to a Mac, so we need an app for it.
-
-RayCast has this feature built in, but I am still using a separate app for this.
-
-I use [rectangle](https://rectangleapp.com/) to move and resize windows using keyboard shortcuts. I used to use [spectacle](https://www.spectacleapp.com/), but rectangle is more regularly maintained and allows me to use all of the same keyboard shortcuts as spectacle.
-
-I highly recommend installing this and memorizing the keyboard shortcuts. Fluid and seamless window management is key to being productive while coding.
-
-Search for `rectangle` in RayCast `brew search` or:
-
-```
-brew install rectangle
-```
-
-## App Switching
-
-The built in App switcher only shows application icons, and only shows 1 icon per app regardless of how many windows you have open in that app.
-
-I use an app switcher called [AltTab](https://alt-tab-macos.netlify.app/). It shows full window previews, and has an option to show a preview for every open window in all applications (even minimized ones).
-
-I replace the built-in `CMD+TAB` shortcut with AltTab.
-
-Search for `alt-tab` in RayCast `brew search` or:
+Formulae and casks actually in use are tracked in [`brew-formulae.txt`](./brew-formulae.txt) and [`brew-casks.txt`](./brew-casks.txt):
 
 ```sh
-brew install alt-tab
+xargs brew install < brew-formulae.txt
+xargs brew install --cask < brew-casks.txt
+```
+
+Custom taps in use on this machine: `sapireli/airprint_bridge` (for the AirPrint bridge formula used by `~/bin/airprint_bridge_launcher.sh`) and `steipete/tap`.
+
+### Keeping things updated
+
+```sh
+brew update            # refresh formula definitions
+brew outdated           # see what's behind
+brew upgrade            # upgrade everything
+brew cleanup             # remove old versions
+
+# Mac App Store apps (needs the `mas` formula, already in brew-formulae.txt)
+mas outdated
+mas upgrade
+
+# macOS itself
+softwareupdate --list
+sudo softwareupdate --install [name listed]
 ```
 
 ## Menu Bar Utilities
 
 ### Hidden Bar
 
-If you have several apps running that have menu bar icons, [Hidden Bar](https://github.com/dwarvesf/hidden) will let you choose which ones should be hidden after a timeout. This cleans things up if you have a ton of background apps running.
-
-Search for `hiddenbar` in RayCast `brew search` or:
+[Hidden Bar](https://github.com/dwarvesf/hidden) hides menu bar icons after a timeout when a lot of background apps are running.
 
 ```sh
-brew install hiddenbar
-```
-
-### System Stats Widgets
-
-I use [stats](https://github.com/exelban/stats) to see my network traffic, CPU temp / usage and RAM usage at a glance.
-
-In each widget, a key setting to look for is under "widget settings", choose "merge widgets into one".
-
-Search for `stats` in RayCast `brew search` or:
-
-```sh
-brew install stats
+brew install --cask hiddenbar
 ```
 
 ### Menu Bar Calendar
 
-I like to have a calendar in the menu bar that I can quickly look at. stats does not include one, so I found [itsycal](https://www.mowglii.com/itsycal/).
+[Itsycal](https://www.mowglii.com/itsycal/) puts a calendar in the menu bar.
 
 ```sh
-brew install itsycal
+brew install --cask itsycal
 ```
 
-itsycal shows the date, so I hide the date in the system menu bar widget:
-
-* System Preferences
-  * Dock & Menu Bar
-      * Clock
-          * Show Date -> Never
-          * Show Day of Week -> No
-
-## Break Timer
-
-I use an app called [Time Out](https://www.dejal.com/timeout/).
-
-I have it setup to show:
-* 10 second micro break every 15 minutes
-* 5 minute long break every 60 minutes
-
-There is also a cross platform break timer call [Stretchly](https://hovancik.net/stretchly/). I have not used it but a lot of people have recommended it.
+Current menu bar clock settings: date display appears to be set to "Never" (`ShowDate` = 2); "Show Day of Week" currently reads as on, which doesn't match an earlier preference for it to be off — check System Settings -> Control Center -> Clock if that matters to you.
 
 ## Web Browser
 
 ### Firefox
 
-I use Firefox because it is open source and comes from the [Mozilla Foundation](https://www.mozilla.org/en-US/about/manifesto/), a non profit company that [respects my privacy](https://www.mozilla.org/en-US/firefox/privacy/).
-
-I use Firefox Developer Edition. To install this with `brew` you will need to tap [a cask](https://github.com/Homebrew/homebrew-cask-versions) first:
+Currently running standard Firefox (not Developer Edition, despite what an earlier version of this doc said):
 
 ```sh
-brew tap homebrew/cask-versions
+brew install --cask firefox
 ```
 
-You can then install Firefox Developer Edition with brew:
-
-```sh
-brew install homebrew/cask-versions/firefox-developer-edition
-```
-
-I use the following extensions to stay productive:
+Extension preferences (not independently re-verified against the actual browser profile, carried over from earlier notes):
 
 * [Tabliss](https://tabliss.io/) - simple new tab page
-* [OneTab](https://www.one-tab.com/) - consolidate a bunch of open tabs into a shareable list of links
-* [Dark Reader](https://darkreader.org/) - turn any site into dark mode
-
-I use the following extensions to protect my privacy while browsing the web:
-
-* Adblocker - [uBlock Origin](https://github.com/gorhill/uBlock)
-* Tracker Blocker - [Privacy Badger](https://privacybadger.org/)
-  * Firefox now includes tracker blocking, but I leave Privacy Badger enabled.
-* [Decentraleyes](https://decentraleyes.org/)
-  * Caches CDN links locally and intercepts requests to serve from the cache. Prevents CDNs from tracking you across websites.
+* [OneTab](https://www.one-tab.com/) - consolidate open tabs
+* [Dark Reader](https://darkreader.org/) - dark mode everywhere
+* [uBlock Origin](https://github.com/gorhill/uBlock) - adblocker
+* [Privacy Badger](https://privacybadger.org/) - tracker blocker
+* [Decentraleyes](https://decentraleyes.org/) - local CDN caching to reduce cross-site tracking
 
 ## Other Apps I Use Daily
 
-* android-file-transfer - Transfer files to / from my android phone
-* android-platform-tools - Installs `adb` without the need for the full android studio.
-* [keepingyouawake](https://keepingyouawake.app/) - Prevents my Mac from going to sleep when I'm presenting / live streaming
-* [discord](https://discord.com/) - Messaging / Community
-* [vlc](https://www.videolan.org/) - I use VLC to watch videos instead of the built in QuickTime.
-* [keka](https://www.keka.io/en/) - Can extract 7z / rar and other types of archives
-* [kap](https://getkap.co/) - Screen recorder / gif maker
-* [figma](https://www.figma.com/) - Image editor
-* [visual-studio-code](https://code.visualstudio.com/) - Code Editor
-* [sublime-text](https://www.sublimetext.com/) - Note taking (I know there are better apps...)
+* [1Password CLI](https://developer.1password.com/docs/cli/) (`1password-cli`) - command-line access to 1Password vaults
+* [aText](https://www.trankynam.com/atext/) (`atext`) - text expansion / snippets
+* [Beekeeper Studio](https://www.beekeeperstudio.io/) (`beekeeper-studio`) - SQL database GUI client
+* [Calibre](https://calibre-ebook.com/) (`calibre`) - ebook management/conversion
+* [Claude Code](https://claude.com/claude-code) (`claude-code`) - Anthropic's CLI coding agent
+* [Inkscape](https://inkscape.org/) (`inkscape`) - vector graphics editor
+* [Keyboard Maestro](https://www.keyboardmaestro.com/) (`keyboard-maestro`) - macros / automation
+* [LM Studio](https://lmstudio.ai/) (`lm-studio`) - run local LLMs
+* [Querious](https://www.araelium.com/querious) (`querious`) - MySQL/MariaDB GUI client
+* [qView](https://interversehq.com/qview/) (`qview`) - lightweight image viewer
+* Slack (`slack`) - team chat
+* [Sublime Text](https://www.sublimetext.com/) (`sublime-text`) - text editor
+* [Synology Assistant](https://www.synology.com/) (`synologyassistant`) - manage the Synology NAS
+* [Syntax Highlight](https://apps.apple.com/app/syntax-highlight/id1438031469) (`syntax-highlight`) - Quick Look syntax highlighting for code files
+* [VS Code](https://code.visualstudio.com/) (`visual-studio-code`) - code editor
+* [WakaTime](https://wakatime.com/) (`wakatime`) - coding time tracking
+* [WordService](https://tempel.org/WordService/) (`wordservice`) - system-wide text services
 
-You can install them in one go by placing them all into a text file and then running brew install:
-
-```
-android-file-transfer
-android-platform-tools
-keepingyouawake
-discord
-slack
-vlc
-keka
-kap
-time-out
-figma
-visual-studio-code
-sublime-text
-insomnia
-```
+Install them all at once:
 
 ```sh
-xargs brew install < apps.txt
-```
-
-### Docker
-
-There are multiple results when you search `docker` within `brew`. To install Docker desktop:
-
-```sh
-brew install --cask docker
+xargs brew install --cask < brew-casks.txt
 ```
 
 ## Terminal
 
-I prefer [iTerm2](https://iterm2.com/) because:
-* Lots of customization options
-* Clickable links
-* Native OS notifications
+I use [iTerm2](https://iterm2.com/).
 
-There are a lot of options for a terminal replacement, but I've been using iTerm2 for years and it works great for my needs.
-
-Checkout their documentation for more info on what iTerm2 can do: [https://iterm2.com/documentation.html](https://iterm2.com/documentation.html)
-
-
-```
-brew install iterm2
+```sh
+brew install --cask iterm2
 ```
 
-Once installed, launch it and customize the settings / preferences to your liking. These are my preferred settings:
+Current actual profile settings (Default profile):
 
-* Appearance
-  * Theme
-    * Minimal
-* Profiles
-  * Default
-      * General -> Working Directory -> Reuse previous session's directory
-      * Colors -> Basic Colors -> Foreground -> Lime Green
-      * Text -> Font -> Anonymous Pro
-          * You can download this font [here](https://www.marksimonson.com/fonts/view/anonymous-pro).
-          * I use this font in VS Code as well
-      * Text -> Font Size -> 36
-          * I use my Macbook to present / teach, so a big font size is important so everyone can see the commands I'm typing
-      * Keys -> Key Mappings -> Presets -> Natural Text Editing
-          * This allows me to use the [keyboard shortcuts](https://gist.github.com/w3cj/022081eda22081b82c52) I know and love inside of iTerm2
+* Font -> Monaco 12
+* Working Directory -> fixed to home directory (an earlier preference had this set to "reuse previous session's directory" — change under Profiles -> Default -> General if you want that back)
+* Foreground color -> a light gray (not the lime green documented previously)
 
 ### Shell
 
-Mac now comes with `zsh` as the default [shell](https://en.wikipedia.org/wiki/Comparison_of_command_shells). I've switched to using this with [Oh My Zsh](https://ohmyz.sh/).
+`zsh` (the macOS default) with [Oh My Zsh](https://ohmyz.sh/), theme `robbyrussell`.
 
-#### Load dotfiles
+#### Dotfiles
 
-All my dotfiles are stored on [github](https://github.com/w3cj/dotfiles).
+`~/.zshrc` isn't tracked in this repo (or any repo) right now — it lives only on-machine. It sets up, among other things: Homebrew completions, Go (`GOROOT`/`GOPATH`), a pinned Python 3.11 as the default `python`/`python3`, the Google Cloud SDK, `nvm`, iTerm2 shell integration, and a handful of personal aliases (including one for a local SSH target — intentionally not reproduced here since this repo is public).
 
-I clone this repo to my machine and copy the files into my home directory.
+There's also an old, stale dotfiles/setup snapshot in iCloud Drive (`~/Library/Mobile Documents/com~apple~CloudDocs/dotfiles`) from a previous job — it's not synced with or representative of this machine's current `.zshrc`; ignore it.
+
+If you want `.zshrc` itself version-controlled going forward, the cleanest path is adding it to this repo (redacting anything sensitive) with a symlink step in `install.sh`.
 
 ### Github SSH Setup
 
-* Follow [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) to setup an ssh key for github
-* Follow [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) to add the ssh key to your github account
-
-#### Other command line tools I use
-
-* [ffmpeg](https://en.wikipedia.org/wiki/FFmpeg) - edit videos from the command line
-* [imagemagick](https://en.wikipedia.org/wiki/ImageMagick) - edit images from the command line
-
-```sh
-brew install ffmpeg
-brew install imagemagick
-```
+* Follow [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) to set up an SSH key for GitHub
+* Follow [this guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) to add it to your GitHub account
 
 ## Node.js
 
-I use nvm to manage the installed versions of Node.js on my machine. This allows me to easily switch between Node.js versions depending on the project I'm working in.
-
-See installation instructions [here](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-OR run this command (make sure v0.39.7 is still the latest)
+[nvm](https://github.com/nvm-sh/nvm) manages Node versions.
 
 ```sh
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 ```
 
-Now that nvm is installed, you can install a specific version of node.js and use it:
-
 ```sh
-nvm install 20
-nvm use 20
+nvm install 22
+nvm use 22
 node --version
 ```
 
 ### Global Modules
 
-There are a few global node modules I use a lot:
+Currently installed globally (via `npm list -g`):
 
-* lite-server
-  * Auto refreshing static file server. Great for working on static apps with no build tools.
-* http-server
-  * Simple static file server.
-* license
-  * Auto generate open source license files
-* gitignore
-  * Auto generate `.gitignore` files base on the current project type
+* `lighthouse` - run Lighthouse audits from the CLI
+* `uipro-cli` - internal/personal CLI tool
+* `corepack` and `npm` ship bundled with Node itself, not separately installed
 
-```
-npm install -g lite-server http-server license gitignore
+```sh
+npm install -g lighthouse uipro-cli
 ```
 
 ## VS Code
 
-VS Code is my preferred code editor.
+VS Code is my editor. Current extensions (via `code --list-extensions`):
 
-You can view all of my VS Code settings / extensions [here](https://github.com/CodingGarden/vscode-settings).
+```
+anthropic.claude-code
+charliermarsh.ruff
+github.vscode-github-actions
+janisdd.vscode-edit-csv
+mechatroner.rainbow-csv
+mohsen1.prettify-json
+ms-python.debugpy
+ms-python.isort
+ms-python.python
+ms-python.vscode-pylance
+ms-python.vscode-python-envs
+ms-toolsai.jupyter
+ms-toolsai.jupyter-keymap
+ms-toolsai.jupyter-renderers
+ms-toolsai.vscode-jupyter-cell-tags
+ms-toolsai.vscode-jupyter-slideshow
+ms-vscode-remote.remote-ssh
+ms-vscode-remote.remote-ssh-edit
+ms-vscode.remote-explorer
+qwtel.sqlite-viewer
+randomfractalsinc.tabular-data-viewer
+randomfractalsinc.vscode-data-preview
+tomoki1207.pdf
+zainchen.json
+zhouronghui.propertylist
+```
+
+Install them all:
+
+```sh
+xargs -L 1 code --install-extension < vscode-extensions.txt
+```
 
 ## Custom Scripts
 

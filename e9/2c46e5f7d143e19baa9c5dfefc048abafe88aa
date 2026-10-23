@@ -1,0 +1,21 @@
+todo.work.md
+  s_f936b2be99fcf7::t_203b4297fef33e 1-29
+todo.home.md
+  s_f936b2be99fcf7::t_e4e8899e2ca17a 1-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e92c46e5f7d143e19baa9c5dfefc048abafe88aa",
+  "prompts": {},
+  "sessions": {
+    "s_f936b2be99fcf7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "feb196e4-8359-4fb0-b0a5-b5c24e8de83e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Twellman <ctwellma@cisco.com>"
+    }
+  }
+}

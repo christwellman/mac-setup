@@ -1,0 +1,22 @@
+zshrc-work.zsh
+  s_f936b2be99fcf7::t_eaa3f0f88daf27 3-4,6-53
+zshrc-common.zsh
+  s_f936b2be99fcf7::t_70f6321d876d6e 10,12,14-16,19-27,32,34-42,53-167
+  s_f936b2be99fcf7::t_b82800ba2c5700 168
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0b31bcafa3e3d12b2f0631f9fa29a49e6bd60c6d",
+  "prompts": {},
+  "sessions": {
+    "s_f936b2be99fcf7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "feb196e4-8359-4fb0-b0a5-b5c24e8de83e",
+        "model": "claude-sonnet-5-5"
+      },
+      "human_author": "Chris Twellman <ctwellma@cisco.com>"
+    }
+  }
+}
